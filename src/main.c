@@ -165,10 +165,6 @@ int main (void)
 		z++;
 	}while(RecordType != 1);
 	ExecuteApp();
-
-	while (1)
-	{
-	}
 	return 0;
 }
 
