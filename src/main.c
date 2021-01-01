@@ -123,8 +123,8 @@ int main (void)
 	GPIO_voidSetPinDirection(GPIOA,PIN0,OUTPUT_GP_PP_10MHZ);
 	//u8 receivedData=255;
 
-	u8 mySSID[]="WE_3505B3";
-	u8 myPassword[]="j3t18251";
+	u8 mySSID[]="Bassem & Mazen";
+	u8 myPassword[]="//7B7-1C1-9M6++";
 	//u8 mySSID[]="AndroidAP";
 	//u8 myPassword[]="kypj0645";
 
@@ -143,9 +143,9 @@ int main (void)
 	//		Refresh the buffer with "GET"ing new page with wifi
 	do
 	{
-		MSTK_voidSetBusyWaitms(1000);
 		WIFI_voidLinkServer(webIP);
 		WIFI_RefreshPage(webLink,z);
+		MSTK_voidSetBusyWaitms(1000);
 		WIFI_voidLinkServer(webIP);
 		WIFI_GetFile(webLink,BufferTXT);
 		MSTK_voidSetBusyWaitms(1000);
