@@ -14,5 +14,6 @@ void WIFI_voidLinkServer(u8 * Copy_u8IP);
 u8 WIFI_u8ReceiveSingle(u8 * Copy_u8HyperLink);
 void ESP8266_VidClearBuffer ( void );
 void MUSART_CallBack (void);
-
+void WIFI_RefreshPage(u8 * Copy_u8HyperLink, u8 PageNo);
+void WIFI_GetFile(u8 * Copy_u8HyperLink, u8 * Copy_u8FileName);
 #endif

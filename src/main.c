@@ -1,9 +1,11 @@
 #include "STD_TYPES.h"
 #include "BIT_MATH.h"
 #include "RCC_interface.h"
+#include "NVIC_interface.h"
 #include "GPIO_interface.h"
 #include "STK_interface.h"
 #include "USART_INTERFACE.h"
+#include "FPEC_interface.h"
 #include "WIFI_interface.h"
 
 
@@ -23,6 +25,7 @@ void ExecuteApp(void)
 	addr_to_call = *(Function_t*)(0x08002004);
 	addr_to_call();
 }
+void Parser_voidParseRecord(u8* Copy_u8BufData);
 
 /*****************************************************/
 void parsebuffer(u8 buff[], u8 *cc, u8 address[], u8 *RecType, u8 data[])
@@ -112,13 +115,13 @@ int main (void)
 	NVIC_voidInit();
 	NVIC_voidSetPriority(37,0b00110000);
 
-	STK_voidInit();
+	MSTK_voidInit();
 	MUSART1_voidInit();
 	NVIC_voidEnableInterrupt (37) ;
 	WIFI_voidInit();
 
 	GPIO_voidSetPinDirection(GPIOA,PIN0,OUTPUT_GP_PP_10MHZ);
-	u8 receivedData=255;
+	//u8 receivedData=255;
 
 	u8 mySSID[]="WE_3505B3";
 	u8 myPassword[]="j3t18251";
@@ -138,13 +141,14 @@ int main (void)
 	u8 z=1;
 	u8 * tempLine;
 	//		Refresh the buffer with "GET"ing new page with wifi
-	/*do
+	do
 	{
+		MSTK_voidSetBusyWaitms(1000);
 		WIFI_voidLinkServer(webIP);
 		WIFI_RefreshPage(webLink,z);
 		WIFI_voidLinkServer(webIP);
 		WIFI_GetFile(webLink,BufferTXT);
-		STK_voidSetBusyDelayMs(1000);
+		MSTK_voidSetBusyWaitms(1000);
 		//			Parsing and flashing line by line
 		for (u8 y=0;y<30;y++)
 		{
@@ -165,7 +169,6 @@ int main (void)
 	while (1)
 	{
 	}
-	 */
 	return 0;
 }
 

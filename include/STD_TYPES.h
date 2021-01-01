@@ -24,6 +24,9 @@ typedef     long double             f128;
 
 typedef enum ErrorStatus 
 {OK,NOK,INDEX_OUT_OF_RANGE} enuErrorStatus;
-# define NULL (void*)0
+
+#ifndef NULL
+#define NULL (void*)0
+#endif
 
 #endif

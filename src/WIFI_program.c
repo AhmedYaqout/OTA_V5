@@ -206,7 +206,7 @@ void WIFI_voidInit(void)
 
 	MUSART1_voidTransmit( (u8 *)"ATE0\r\n" );
 	MUSART1_voidTransmit( (u8 *)"AT+CWMODE=1\r\n" );
-	STK_voidSetBusyDelayMs(20000);
+	MSTK_voidSetBusyWaitms(20000);
 
 }
 
@@ -256,18 +256,14 @@ void WIFI_voidConnectWifi(u8 * Copy_u8SSID, u8 * Copy_u8WifiPassword)
 		Local_u8APConnect1[Local_u8APConnect1length] = Local_u8APConnect3[m];
 	}
 	u8 connection_status=255;
-	//connection_status=Private_WIFI_u8CheckConnection();
-	while (Private_WIFI_u8CheckConnection()!=1)
+	connection_status=Private_WIFI_u8CheckConnection();
+	while(connection_status!=1)
 	{
+		connection_status=Private_WIFI_u8CheckConnection();
 		MUSART1_voidTransmit(Local_u8APConnect1);
-		STK_voidSetBusyDelayMs(5000);
-		u32 w=0;
-		while (w<10000)
-		{
-			w++;
-			asm("NOP");
-		}
+		MSTK_voidSetBusyWaitms(10000);
 	}
+	MUSART1_VidSetCallBack(MUSART_CallBack);
 }
 
 void WIFI_voidLinkServer(u8 * Copy_u8IP)
@@ -278,7 +274,7 @@ void WIFI_voidLinkServer(u8 * Copy_u8IP)
 	MUSART1_voidTransmit( (u8 *) "\"," );
 	MUSART1_voidTransmit( (u8 *) "80" );
 	MUSART1_voidTransmit( (u8 *) "\r\n" );
-	STK_voidSetBusyDelayMs(20000);
+	MSTK_voidSetBusyWaitms(20000);
 }
 
 
@@ -290,7 +286,7 @@ void WIFI_GetFile(u8 * Copy_u8HyperLink, u8 * Copy_u8FileName)
 	MUSART1_voidTransmit( (u8 *) "AT+CIPSEND=" );
 	MUSART1_voidTransmit( (u8 *) "45" );
 	MUSART1_voidTransmit((u8 *) "\r\n" );
-	STK_voidSetBusyDelayUs(3000);
+	MSTK_voidSetBusyWaitms(3000);
 
 	ESP8266_VidClearBuffer();
 
@@ -360,10 +356,10 @@ void WIFI_RefreshPage(u8 * Copy_u8HyperLink, u8 PageNo)
 	/* Count whole command first before transmission*/
 	MUSART1_voidTransmit( (u8 *) byteCount );
 	MUSART1_voidTransmit((u8 *) "\r\n" );
-	STK_voidSetBusyDelayUs(3000);
+	MSTK_voidSetBusyWaitms(3000);
 
 	MUSART1_voidTransmit((u8 *) mainScript );
-	STK_voidSetBusyDelayMs(1500);
+	MSTK_voidSetBusyWaitms(1500);
 }
 
 /*************************************************/
@@ -371,13 +367,7 @@ void WIFI_RefreshPage(u8 * Copy_u8HyperLink, u8 PageNo)
 u8 Private_WIFI_u8CheckConnection(void)
 {	ESP8266_VidClearBuffer();
 MUSART1_voidTransmit((u8 *)"AT+CWJAP?\r\n");
-u8 w=0;
-while (w<250)
-{
-	w++;
-	asm("NOP");
-}
-STK_voidSetBusyDelayMs(1000);
+MSTK_voidSetBusyWaitms(1000);
 u8 Local_u8Result	=	255;
 
 if (buffCheck[0]=='N' && buffCheck[1]=='o')
