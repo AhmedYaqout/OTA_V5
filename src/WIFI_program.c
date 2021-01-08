@@ -470,9 +470,8 @@ void ESP8266_VidClearCheckBuffer ( void ){
 
 	u16 LOC_u8Iterator1 = 0 ;
 
-	Iterator     = 0 ;
-
-	for( LOC_u8Iterator1 = 0 ; LOC_u8Iterator1 < 100 ; LOC_u8Iterator1++ ){
+	for( LOC_u8Iterator1 = 0 ; LOC_u8Iterator1 < 100 ; LOC_u8Iterator1++ )
+	{
 
 		buffCheck[ LOC_u8Iterator1 ] = 0 ;
 
