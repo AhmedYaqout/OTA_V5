@@ -163,7 +163,8 @@ enum mode1 Mode1=entrance;
 void MUSART_CallBackCheck ( void )
 {
 	if (GET_BIT(USART1 -> SR, RXNE))
-	{	static u8 iDx=0;
+	{
+		static u8 iDx=0;
 	/* Receive ESP8266 Response */
 	//DataCome[ Iterator ] = MUSART1_u8ReadDataRegister();
 	/* ------------------ */
@@ -176,20 +177,24 @@ void MUSART_CallBackCheck ( void )
 	case entrance:
 		if(ch == 'N' || ch=='+')
 		{
-			buffCheck[iDx]=ch;
+			buffCheck[0]=ch;
 			Mode1=storing;
-			if (iDx < 100)
-			{
-				iDx++;
-			}
+//			if (iDx < 100)
+//			{
+//				iDx++;
+//			}
 		}
 		break;
 	case storing:
-		buffCheck[iDx]=ch;
-		if (iDx < 100)
+		if(ch == 'o' || ch=='C' )
 		{
-			iDx++;
+			buffCheck[1]=ch;
+			//		if (iDx < 100)
+			//		{
+			//			iDx++;
+			//		}
 		}
+
 		break;
 	}
 	}
@@ -256,13 +261,18 @@ void WIFI_voidConnectWifi(u8 * Copy_u8SSID, u8 * Copy_u8WifiPassword)
 		Local_u8APConnect1[Local_u8APConnect1length] = Local_u8APConnect3[m];
 	}
 	u8 connection_status=255;
-	connection_status=Private_WIFI_u8CheckConnection();
-	while(connection_status!=1)
+	u8 checkCounter = 0;
+	do
 	{
-		connection_status=Private_WIFI_u8CheckConnection();
+		connection_status=Private_WIFI_u8CheckConnection(); /* FIXEDBY: Sa3eed */
+		checkCounter++;
+		if(connection_status == 1)
+		{
+			break;
+		}
 		MUSART1_voidTransmit(Local_u8APConnect1);
 		MSTK_voidSetBusyWaitms(10000);
-	}
+	}while((connection_status==0) && (checkCounter<3));
 	MUSART1_VidSetCallBack(MUSART_CallBack);
 }
 
@@ -284,7 +294,7 @@ void WIFI_GetFile(u8 * Copy_u8HyperLink, u8 * Copy_u8FileName)
 {
 	ESP8266_VidClearBuffer();
 	MUSART1_voidTransmit( (u8 *) "AT+CIPSEND=" );
-	MUSART1_voidTransmit( (u8 *) "45" );
+	MUSART1_voidTransmit( (u8 *) WEBSITE_BYTECOUNT );
 	MUSART1_voidTransmit((u8 *) "\r\n" );
 	MSTK_voidSetBusyWaitms(3000);
 
@@ -368,7 +378,7 @@ u8 Private_WIFI_u8CheckConnection(void)
 {	ESP8266_VidClearBuffer();
 MUSART1_voidTransmit((u8 *)"AT+CWJAP?\r\n");
 MSTK_voidSetBusyWaitms(1000);
-u8 Local_u8Result	=	255;
+u8 Local_u8Result	=	0;
 
 if (buffCheck[0]=='N' && buffCheck[1]=='o')
 {

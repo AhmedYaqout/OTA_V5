@@ -8,5 +8,9 @@
 #ifndef WIFI_CONFIG_H
 #define WIFI_CONFIG_H
 
+
+#define WEBSITE_BYTECOUNT "41"
+
+
 /* Empty File */
 #endif

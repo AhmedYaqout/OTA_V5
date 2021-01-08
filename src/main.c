@@ -8,6 +8,16 @@
 #include "FPEC_interface.h"
 #include "WIFI_interface.h"
 
+/*  Bug report */
+/*
+ * - FIXED: wifi connect checking while loop never breaks
+ * - server might return errors and not read file
+ *
+ *
+ * */
+
+
+
 
 #define LINES 30  //  MAX#Lines / packet
 #define CHARS 45  //  MAX#chars / line
@@ -129,7 +139,8 @@ int main (void)
 	//u8 myPassword[]="kypj0645";
 
 	u8 webIP[]="162.253.155.226";
-	u8 webLink[]="mofarmiot.freevar.com";
+//	u8 webLink[]="mofarmiot.freevar.com";
+	u8 webLink[]="otagp.freevar.com";
 	u8 BufferTXT[] = "/buffer.txt\r\n";
 	//MUSART1_voidTransmit((u8 *)"AT+CWQAP\r\n");
 	//MUSART1_voidTransmit((u8 *)"AT+CWJAP?\r\n");
