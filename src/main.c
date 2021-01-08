@@ -141,7 +141,7 @@ int main (void)
 	u8 myPassword[]="j3t18251";
 
 	u8 webIP[]="162.253.155.226";
-//	u8 webLink[]="mofarmiot.freevar.com";
+	//	u8 webLink[]="mofarmiot.freevar.com";
 	u8 webLink[]="otagp.freevar.com";
 	u8 BufferTXT[] = "/buffer.txt\r\n";
 	MUSART1_voidTransmit((u8 *)"AT+CWQAP\r\n");
@@ -172,6 +172,8 @@ int main (void)
 				Parser_voidParseRecord(tempLine);
 			}else if (RecordType==1)
 			{
+				u8 mainScript[100]={"GET http://"};
+				u8 part2[]={"/script.php?command=2"};
 				break;
 			}
 		}
