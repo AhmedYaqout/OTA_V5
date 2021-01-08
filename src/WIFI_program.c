@@ -165,38 +165,38 @@ void MUSART_CallBackCheck ( void )
 	if (GET_BIT(USART1 -> SR, RXNE))
 	{
 		static u8 iDx=0;
-	/* Receive ESP8266 Response */
-	//DataCome[ Iterator ] = MUSART1_u8ReadDataRegister();
-	/* ------------------ */
+		/* Receive ESP8266 Response */
+		//DataCome[ Iterator ] = MUSART1_u8ReadDataRegister();
+		/* ------------------ */
 
-	//Iterator++;
+		//Iterator++;
 
-	ch = USART1->DR;
+		ch = USART1->DR;
 
-	switch(Mode1){
-	case entrance:
-		if(ch == 'N' || ch=='+')
-		{
-			buffCheck[0]=ch;
-			Mode1=storing;
-//			if (iDx < 100)
-//			{
-//				iDx++;
-//			}
+		switch(Mode1){
+		case entrance:
+			if(ch == 'N' || ch=='+')
+			{
+				buffCheck[0]=ch;
+				Mode1=storing;
+				//			if (iDx < 100)
+				//			{
+				//				iDx++;
+				//			}
+			}
+			break;
+		case storing:
+			if(ch == 'o' || ch=='C' )
+			{
+				buffCheck[1]=ch;
+				//		if (iDx < 100)
+				//		{
+				//			iDx++;
+				//		}
+			}
+			Mode1=entrance;
+			break;
 		}
-		break;
-	case storing:
-		if(ch == 'o' || ch=='C' )
-		{
-			buffCheck[1]=ch;
-			//		if (iDx < 100)
-			//		{
-			//			iDx++;
-			//		}
-		}
-
-		break;
-	}
 	}
 }
 
@@ -220,7 +220,7 @@ void WIFI_voidConnectWifi(u8 * Copy_u8SSID, u8 * Copy_u8WifiPassword)
 	/*	The algorithm is to concatenate the wifi name, password and AT command in one string*/
 	static u8 j,k,l,m;
 	/*	 The first part of the command from 'A' till the opening quote of the SSID*/
-	static u8 Local_u8APConnect1[100] = "AT+CWJAP=\"";
+	static u8 Local_u8APConnect1[100] = "AT+CWJAP_CUR=\"";
 
 	/*	The second part of the command from the closing quote of the SSID till the opening quote of the password*/
 	static u8 Local_u8APConnect2[5] =	"\",\"";
@@ -260,19 +260,17 @@ void WIFI_voidConnectWifi(u8 * Copy_u8SSID, u8 * Copy_u8WifiPassword)
 	{
 		Local_u8APConnect1[Local_u8APConnect1length] = Local_u8APConnect3[m];
 	}
-	u8 connection_status=255;
-	u8 checkCounter = 0;
+	volatile u8 connection_status=255;
 	do
 	{
 		connection_status=Private_WIFI_u8CheckConnection(); /* FIXEDBY: Sa3eed */
-		checkCounter++;
 		if(connection_status == 1)
 		{
 			break;
 		}
 		MUSART1_voidTransmit(Local_u8APConnect1);
 		MSTK_voidSetBusyWaitms(10000);
-	}while((connection_status==0) && (checkCounter<3));
+	}while((connection_status==0));
 	MUSART1_VidSetCallBack(MUSART_CallBack);
 }
 
@@ -375,10 +373,10 @@ void WIFI_RefreshPage(u8 * Copy_u8HyperLink, u8 PageNo)
 /*************************************************/
 
 u8 Private_WIFI_u8CheckConnection(void)
-{	ESP8266_VidClearBuffer();
-MUSART1_voidTransmit((u8 *)"AT+CWJAP?\r\n");
-MSTK_voidSetBusyWaitms(1000);
-u8 Local_u8Result	=	0;
+{	ESP8266_VidClearCheckBuffer();
+MUSART1_voidTransmit((u8 *)"AT+CWJAP_CUR?\r\n");
+MSTK_voidSetBusyWaitms(2000);
+u8 Local_u8Result	=	255;
 
 if (buffCheck[0]=='N' && buffCheck[1]=='o')
 {
@@ -465,5 +463,18 @@ void ESP8266_VidClearBuffer ( void ){
 			buf[ LOC_u8Iterator1 ][ LOC_u8Iterator2 ] = 0 ;
 
 		}
+	}
+}
+
+void ESP8266_VidClearCheckBuffer ( void ){
+
+	u16 LOC_u8Iterator1 = 0 ;
+
+	Iterator     = 0 ;
+
+	for( LOC_u8Iterator1 = 0 ; LOC_u8Iterator1 < 100 ; LOC_u8Iterator1++ ){
+
+		buffCheck[ LOC_u8Iterator1 ] = 0 ;
+
 	}
 }
