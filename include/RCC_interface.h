@@ -36,7 +36,7 @@
 
 
 void RCC_voidEnableClock(u8 Copy_u8BusId, u8 Copy_u8PerId);
-void RCC_voidDisableClock(u8 Copy_u8BusId, u8 Copy_u8PerId);
+//void RCC_voidDisableClock(u8 Copy_u8BusId, u8 Copy_u8PerId);
 void RCC_voidInitSysClock(void);
 
 #endif

@@ -24,14 +24,11 @@ void RCC_voidEnableClock(u8 Copy_u8BusId, u8 Copy_u8PerId){
         }
 
     }
-    else
-    {
-        /* Return Error */
-    }
+
     
 }
 
-void RCC_voidDisableClock(u8 Copy_u8BusId, u8 Copy_u8PerId){
+/*void RCC_voidDisableClock(u8 Copy_u8BusId, u8 Copy_u8PerId){
 
     if (Copy_u8PerId <= 31)
     {
@@ -44,12 +41,9 @@ void RCC_voidDisableClock(u8 Copy_u8BusId, u8 Copy_u8PerId){
         }
 
     }
-    else
-    {
-        /* Return Error */
-    }
     
-}
+
+}*/
 
 void RCC_voidInitSysClock(void){
 

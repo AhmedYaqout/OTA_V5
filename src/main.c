@@ -7,6 +7,7 @@
 #include "USART_INTERFACE.h"
 #include "FPEC_interface.h"
 #include "WIFI_interface.h"
+#include "WIFI_config.h"
 
 /*  Bug report */
 /*
@@ -22,6 +23,8 @@
 #define LINES 30  //  MAX#Lines / packet
 #define CHARS 45  //  MAX#chars / line
 extern u8 buf[LINES][CHARS];
+extern u8 status;
+
 
 typedef void (*Function_t)(void);
 Function_t addr_to_call = 0;
@@ -117,37 +120,11 @@ void parsebuffer(u8 buff[], u8 *cc, u8 address[], u8 *RecType, u8 data[])
 }
 /*****************************************************/
 
-int main (void)
+void BurnNewAPP(void)
 {
-	RCC_voidInitSysClock();
-	RCC_voidEnableClock(RCC_APB2,RCC_GPIOA);
 
-	NVIC_voidInit();
-	NVIC_voidSetPriority(37,0b00110000);
+	MUSART1_VidSetCallBack(MUSART_CallBack);
 
-	MSTK_voidInit();
-	MUSART1_voidInit();
-	NVIC_voidEnableInterrupt (37) ;
-	WIFI_voidInit();
-
-	GPIO_voidSetPinDirection(GPIOA,PIN0,OUTPUT_GP_PP_10MHZ);
-	//u8 receivedData=255;
-
-	//u8 mySSID[]="Bassem & Mazen";
-	//u8 myPassword[]="//7B7-1C1-9M6++";
-	//u8 mySSID[]="AndroidAP";
-	//u8 myPassword[]="kypj0645";
-	u8 mySSID[]="WE_3505B3";
-	u8 myPassword[]="j3t18251";
-
-	u8 webIP[]="162.253.155.226";
-	//	u8 webLink[]="mofarmiot.freevar.com";
-	u8 webLink[]="otagp.freevar.com";
-	u8 BufferTXT[] = "/buffer.txt\r\n";
-	MUSART1_voidTransmit((u8 *)"AT+CWQAP\r\n");
-	//MUSART1_voidTransmit((u8 *)"AT+CWJAP?\r\n");
-	//STK_voidSetBusyDelayMs(1500);
-	WIFI_voidConnectWifi(mySSID,myPassword);
 	FPEC_voidEraseAppArea();
 
 	u8 CC=0,RecordType=0,Address[4]={0},DataBuffer[32]={0};
@@ -172,14 +149,56 @@ int main (void)
 				Parser_voidParseRecord(tempLine);
 			}else if (RecordType==1)
 			{
-				u8 mainScript[100]={"GET http://"};
-				u8 part2[]={"/script.php?command=2"};
+				status = 2;
+				WIFI_GetFile(webLink,BufferTXT);
 				break;
 			}
 		}
 		z++;
 	}while(RecordType != 1);
-	ExecuteApp();
-	return 0;
+}
+void main (void)
+{
+	RCC_voidInitSysClock();
+	RCC_voidEnableClock(RCC_APB2,RCC_GPIOA);
+
+	NVIC_voidInit();
+	NVIC_voidSetPriority(37,0b00110000);
+
+	MSTK_voidInit();
+	MUSART1_voidInit();
+	NVIC_voidEnableInterrupt (37) ;
+	WIFI_voidInit();
+
+	GPIO_voidSetPinDirection(GPIOA,PIN0,OUTPUT_GP_PP_10MHZ);
+	//u8 receivedData=255;
+
+
+	//u8 StatusVar=2;
+	MUSART1_voidTransmit((u8 *)"AT+CWQAP\r\n");
+	//MUSART1_voidTransmit((u8 *)"AT+CWJAP?\r\n");
+	//STK_voidSetBusyDelayMs(1500);
+	WIFI_voidConnectWifi(mySSID,myPassword);
+	MUSART1_VidSetCallBack(MUSART_CallBackStatus);
+
+	WIFI_voidLinkServer(webIP);
+//	ESP8266_VidClearCheckBuffer();
+	WIFI_GetFile(webLink,StatusTXT);
+
+
+
+	if(status == 1)
+	{
+		BurnNewAPP();
+		ExecuteApp();
+
+	}
+	else
+	{
+		ExecuteApp();
+	}
+
+
+
 }
 

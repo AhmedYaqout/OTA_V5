@@ -18,9 +18,9 @@
 #include "WIFI_private.h"
 #include "WIFI_config.h"
 
-
+u8 iDx=0;
 u8 volatile Iterator = 0  ;
-u8 volatile DataCome[1350] ;
+//u8 volatile DataCome[1350] ;
 static  u8 * LineArr = NULL;
 
 /* <NEW> */
@@ -33,7 +33,7 @@ enum mode { DO_NOTHING,READ_NO_CHARS, READ_CHARS, READ_FILE_SIZE};
 enum mode Mode =DO_NOTHING ;
 
 u8 ch=0;
-
+u8 status=0;
 u8 buf[LINES][CHARS];
 u8 buffCheck[100];
 u8 idxLines = 0;
@@ -63,20 +63,20 @@ u32 myA2I(char a[], u32 size)
 }
 
 
-/*****************/
+/****************
 void WIFI_SetLineBuffer(u8 * Copy_u8LineBuffer)
 {
 	if (Copy_u8LineBuffer!= NULL)
 	{
 		LineArr = Copy_u8LineBuffer;
 	}
-}
+}*/
 /*****************/
 
 
 void MUSART_CallBack ( void ){
-	if (GET_BIT(USART1 -> SR, RXNE))
-	{
+	//if (GET_BIT(USART1 -> SR, RXNE))
+	//{
 		/* Receive ESP8266 Response */
 		//DataCome[ Iterator ] = MUSART1_u8ReadDataRegister();
 		/* ------------------ */
@@ -155,16 +155,16 @@ void MUSART_CallBack ( void ){
 
 		MUSART1_VidClearFlags();
 		CLR_BIT(USART1 -> SR, RXNE);
-	}
+	//}
 
 }
 enum mode1 {entrance,storing};
 enum mode1 Mode1=entrance;
 void MUSART_CallBackCheck ( void )
 {
-	if (GET_BIT(USART1 -> SR, RXNE))
-	{
-		static u8 iDx=0;
+	//if (GET_BIT(USART1 -> SR, RXNE))
+	//{
+		//static u8 iDx=0;
 		/* Receive ESP8266 Response */
 		//DataCome[ Iterator ] = MUSART1_u8ReadDataRegister();
 		/* ------------------ */
@@ -186,18 +186,33 @@ void MUSART_CallBackCheck ( void )
 			}
 			break;
 		case storing:
-			if(ch == 'o' || ch=='C' )
+			if(ch == 'o' || ch =='C' )
 			{
+
 				buffCheck[1]=ch;
 				//		if (iDx < 100)
 				//		{
 				//			iDx++;
 				//		}
 			}
+
 			Mode1=entrance;
 			break;
 		}
-	}
+	//}
+}
+
+void MUSART_CallBackStatus(void){
+	//+IPD,1:1
+	ch = USART1->DR;
+	buffCheck[iDx]=ch;
+	if ((buffCheck[iDx - 1] == ':') && (ch == '0' || ch == '1'))
+		{
+		status = ch - 48 ;
+		//MUSART1_VidSetCallBack(MUSART_CallBackCheck);
+		}
+	iDx++;
+
 }
 
 void WIFI_voidInit(void)
@@ -263,7 +278,7 @@ void WIFI_voidConnectWifi(u8 * Copy_u8SSID, u8 * Copy_u8WifiPassword)
 	volatile u8 connection_status=255;
 	do
 	{
-		connection_status=Private_WIFI_u8CheckConnection(); /* FIXEDBY: Sa3eed */
+		connection_status=Private_WIFI_u8CheckConnection();
 		if(connection_status == 1)
 		{
 			break;
@@ -271,7 +286,9 @@ void WIFI_voidConnectWifi(u8 * Copy_u8SSID, u8 * Copy_u8WifiPassword)
 		MUSART1_voidTransmit(Local_u8APConnect1);
 		MSTK_voidSetBusyWaitms(10000);
 	}while((connection_status==0));
-	MUSART1_VidSetCallBack(MUSART_CallBack);
+
+
+	//MUSART1_VidSetCallBack(MUSART_CallBack);
 }
 
 void WIFI_voidLinkServer(u8 * Copy_u8IP)
@@ -292,6 +309,9 @@ void WIFI_GetFile(u8 * Copy_u8HyperLink, u8 * Copy_u8FileName)
 {
 	ESP8266_VidClearBuffer();
 	MUSART1_voidTransmit( (u8 *) "AT+CIPSEND=" );
+	if (status == 2)
+		MUSART1_voidTransmit( (u8 *) "55" );
+	else
 	MUSART1_voidTransmit( (u8 *) WEBSITE_BYTECOUNT );
 	MUSART1_voidTransmit((u8 *) "\r\n" );
 	MSTK_voidSetBusyWaitms(3000);
@@ -300,8 +320,9 @@ void WIFI_GetFile(u8 * Copy_u8HyperLink, u8 * Copy_u8FileName)
 
 	MUSART1_voidTransmit( (u8 *) "GET http://" );
 	MUSART1_voidTransmit( (u8 *) Copy_u8HyperLink );
-	/*		MUSART1_voidTransmit((u8 *) "/status.txt\r\n" );*/
 	MUSART1_voidTransmit((u8 *) Copy_u8FileName );
+	MSTK_voidSetBusyWaitms(3000);
+
 
 }
 void WIFI_RefreshPage(u8 * Copy_u8HyperLink, u8 PageNo)
@@ -374,8 +395,9 @@ void WIFI_RefreshPage(u8 * Copy_u8HyperLink, u8 PageNo)
 
 u8 Private_WIFI_u8CheckConnection(void)
 {	ESP8266_VidClearCheckBuffer();
-MUSART1_voidTransmit((u8 *)"AT+CWJAP_CUR?\r\n");
-MSTK_voidSetBusyWaitms(2000);
+//MUSART1_voidTransmit((u8 *)"AT+CWJAP_CUR?\r\n");
+MUSART1_voidTransmit((u8 *)"AT+CWJAP?\r\n");
+MSTK_voidSetBusyWaitms(3000);
 u8 Local_u8Result	=	255;
 
 if (buffCheck[0]=='N' && buffCheck[1]=='o')
@@ -390,6 +412,7 @@ return Local_u8Result;
 
 }
 
+/*
 u8 Private_WIFI_u8ValidateCmd(void)
 {
 	u8 Local_u8Response[100]={0};
@@ -410,8 +433,9 @@ u8 Private_WIFI_u8ValidateCmd(void)
 	return Local_u8Result;
 
 }
+*/
 
-u8 Private_WIFI_u8ValidateData(void)
+/*u8 Private_WIFI_u8ValidateData(void)
 {
 	u8 Local_u8Response[100]={0};
 	u8 i	=	0;
@@ -430,9 +454,9 @@ u8 Private_WIFI_u8ValidateData(void)
 	}
 	return Local_u8Result;
 
-}
+}*/
 
-u8 Private_WIFI_u8Data(void)
+/*u8 Private_WIFI_u8Data(void)
 {
 	u8 Local_u8Response[100]={0};
 	u8 i	=	0;
@@ -449,7 +473,7 @@ u8 Private_WIFI_u8Data(void)
 
 	return Local_u8Result;
 
-}
+}*/
 void ESP8266_VidClearBuffer ( void ){
 
 	u16 LOC_u8Iterator1 = 0 ;
@@ -477,3 +501,5 @@ void ESP8266_VidClearCheckBuffer ( void ){
 
 	}
 }
+
+
