@@ -24,7 +24,7 @@
 #define CHARS 45  //  MAX#chars / line
 extern u8 buf[LINES][CHARS];
 extern u8 status;
-
+extern u8 iDx;
 
 typedef void (*Function_t)(void);
 Function_t addr_to_call = 0;
@@ -153,6 +153,7 @@ void BurnNewAPP(void)
 	}while(RecordType != 1);
 
 	status = 2;
+	WIFI_voidLinkServer(webIP);
 	WIFI_GetFile(webLink,NoUpdate);
 
 }
@@ -183,6 +184,7 @@ void main (void)
 	WIFI_voidLinkServer(webIP);
 //	ESP8266_VidClearCheckBuffer();
 	WIFI_GetFile(webLink,StatusTXT);
+
 
 
 

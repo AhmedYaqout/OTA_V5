@@ -310,9 +310,9 @@ void WIFI_GetFile(u8 * Copy_u8HyperLink, u8 * Copy_u8FileName)
 	ESP8266_VidClearBuffer();
 	MUSART1_voidTransmit( (u8 *) "AT+CIPSEND=" );
 	if (status == 2)
-		MUSART1_voidTransmit( (u8 *) "55" );
+		{MUSART1_voidTransmit( (u8 *) "55" );}
 	else
-	MUSART1_voidTransmit( (u8 *) WEBSITE_BYTECOUNT );
+	{MUSART1_voidTransmit( (u8 *) WEBSITE_BYTECOUNT );}
 	MUSART1_voidTransmit((u8 *) "\r\n" );
 	MSTK_voidSetBusyWaitms(3000);
 
