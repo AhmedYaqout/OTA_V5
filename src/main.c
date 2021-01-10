@@ -147,15 +147,14 @@ void BurnNewAPP(void)
 			if (RecordType==4||RecordType==0)
 			{
 				Parser_voidParseRecord(tempLine);
-			}else if (RecordType==1)
-			{
-				status = 2;
-				WIFI_GetFile(webLink,BufferTXT);
-				break;
 			}
 		}
 		z++;
 	}while(RecordType != 1);
+
+	status = 2;
+	WIFI_GetFile(webLink,NoUpdate);
+
 }
 void main (void)
 {

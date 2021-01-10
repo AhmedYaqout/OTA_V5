@@ -394,7 +394,7 @@ void WIFI_RefreshPage(u8 * Copy_u8HyperLink, u8 PageNo)
 /*************************************************/
 
 u8 Private_WIFI_u8CheckConnection(void)
-{	ESP8266_VidClearCheckBuffer();
+{	//ESP8266_VidClearCheckBuffer();
 //MUSART1_voidTransmit((u8 *)"AT+CWJAP_CUR?\r\n");
 MUSART1_voidTransmit((u8 *)"AT+CWJAP?\r\n");
 MSTK_voidSetBusyWaitms(3000);
@@ -490,7 +490,7 @@ void ESP8266_VidClearBuffer ( void ){
 	}
 }
 
-void ESP8266_VidClearCheckBuffer ( void ){
+/*void ESP8266_VidClearCheckBuffer ( void ){
 
 	u16 LOC_u8Iterator1 = 0 ;
 
@@ -500,6 +500,6 @@ void ESP8266_VidClearCheckBuffer ( void ){
 		buffCheck[ LOC_u8Iterator1 ] = 0 ;
 
 	}
-}
+}*/
 
 

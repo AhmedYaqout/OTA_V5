@@ -16,7 +16,7 @@
 #define webLink           "mofarmiot.freevar.com"
 #define BufferTXT         "/buffer.txt\r\n"
 #define StatusTXT		  "/status.txt\r\n"
-#define NoUpdate          "/script.php?command=2"
+#define NoUpdate          "/script.php?command=2\r\n"
 //u8 mySSID[]="Bassem & Mazen";
 //u8 myPassword[]="//7B7-1C1-9M6++";
 //u8 mySSID[]="AndroidAP";
