@@ -175,7 +175,7 @@ void main (void)
 
 
 	//u8 StatusVar=2;
-	MUSART1_voidTransmit((u8 *)"AT+CWQAP\r\n");
+	//MUSART1_voidTransmit((u8 *)"AT+CWQAP\r\n");
 	//MUSART1_voidTransmit((u8 *)"AT+CWJAP?\r\n");
 	//STK_voidSetBusyDelayMs(1500);
 	WIFI_voidConnectWifi(mySSID,myPassword);

@@ -10,8 +10,8 @@
 
 
 #define WEBSITE_BYTECOUNT "45"
-#define mySSID            "WEF603BB"
-#define myPassword        "kc081097"
+#define mySSID            "WE_3505B3"
+#define myPassword        "j3t18251"
 #define webIP             "69.197.143.12"
 #define webLink           "mofarmiot.freevar.com"
 #define BufferTXT         "/buffer.txt\r\n"
